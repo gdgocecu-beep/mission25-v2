@@ -1,15 +1,15 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Loader2 } from "lucide-react"
 import dynamic from 'next/dynamic'
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 // Lazy-load EarthGlobe to avoid increasing initial bundle size
 const EarthGlobe = dynamic(() => import('@/components/earth-globe'), { ssr: false })
-import { ArrowRight, Search, Loader2, MapPin, Zap } from "lucide-react"
-import Image from "next/image"
 
 interface EarthImage {
   url: string
@@ -165,40 +165,41 @@ export default function CupolaPage() {
   }, [router])
 
   const handleSearch = async () => {
-    if (!cityInput || !yearInput) return
+  if (!cityInput) return
 
-    setIsSearching(true)
+  setIsSearching(true)
 
-    try {
-      const response = await fetch(
-        `https://images-api.nasa.gov/search?q=${encodeURIComponent(cityInput)}&media_type=image&year_start=${yearInput}&year_end=${yearInput}`,
-      )
-      const data = await response.json()
+  try {
+    // Remove year from the API call
+    const response = await fetch(
+      `https://images-api.nasa.gov/search?q=${encodeURIComponent(cityInput)}&media_type=image`
+    )
+    const data = await response.json()
 
-      if (data.collection.items.length > 0) {
-        const item = data.collection.items[0]
-        const imageUrl = item.links?.[0]?.href || currentImage?.url
+    if (data.collection.items.length > 0) {
+      const item = data.collection.items[0]
+      const imageUrl = item.links?.[0]?.href || currentImage?.url
 
-        const image: EarthImage = {
-          url: imageUrl,
-          title: item.data[0].title,
-          year: yearInput,
-          description: item.data[0].description || "View from the International Space Station",
-          country: cityInput,
-          stats: {
-            altitude: "408 km",
-            speed: "28,000 km/h",
-            orbit: "90 min",
-            photos: "3.5M+",
-          },
-        }
-
-        setCurrentImage(image)
-        setScore((prev) => prev + 25)
-        setStep(2)
-      } else {
-        throw new Error("No images found")
+      const image: EarthImage = {
+        url: imageUrl,
+        title: item.data[0].title,
+        year: new Date().getFullYear().toString(), // Use current year
+        description: item.data[0].description || "View from the International Space Station",
+        country: cityInput,
+        stats: {
+          altitude: "408 km",
+          speed: "28,000 km/h",
+          orbit: "90 min",
+          photos: "3.5M+",
+        },
       }
+
+      setCurrentImage(image)
+      setScore((prev) => prev + 25)
+      setStep(2)
+    } else {
+      throw new Error("No images found")
+    }
     } catch (error) {
       // Fallback to local data
       const cityLower = cityInput.toLowerCase()
@@ -332,33 +333,33 @@ export default function CupolaPage() {
         <div className="w-full h-[72vh] rounded-3xl overflow-hidden shadow-2xl bg-black/60 border border-slate-800 relative">
           {/* Overlay search controls (top-right) */}
           <div className="absolute top-4 left-4 z-20 w-[340px] p-3 rounded-lg bg-black/60 border border-slate-700 backdrop-blur-sm">
-            <div className="flex gap-2">
-              <Input
-                type="text"
-                placeholder="City (e.g. Cairo)"
-                value={cityInput}
-                onChange={(e) => setCityInput(e.target.value)}
-                className="flex-1 h-10 bg-transparent border-slate-600 text-white"
-              />
-            </div>
-            <div className="mt-2 flex gap-2 justify-end">
-              <Button
-                onClick={handleRandomize}
-                size="sm"
-                className="h-9 px-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white"
-              >
-                Random
-              </Button>
-              <Button
-                onClick={handleSearch}
-                disabled={!cityInput || !yearInput || isSearching}
-                size="sm"
-                className="h-9 px-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white"
-              >
-                {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Search'}
-              </Button>
-            </div>
-          </div>
+  <div className="flex gap-2">
+    <Input
+      type="text"
+      placeholder="City (e.g. Cairo)"
+      value={cityInput}
+      onChange={(e) => setCityInput(e.target.value)}
+      className="flex-1 h-10 bg-transparent border-slate-600 text-white"
+    />
+  </div>
+  <div className="mt-2 flex gap-2 justify-end">
+    <Button
+      onClick={handleRandomize}
+      size="sm"
+      className="h-9 px-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+    >
+      Random
+    </Button>
+    <Button
+      onClick={handleSearch}
+      disabled={!cityInput || isSearching}
+      size="sm"
+      className="h-9 px-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white"
+    >
+      {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Search'}
+    </Button>
+  </div>
+</div>
           {/* Render the interactive Earth globe here */}
           <EarthGlobe
             fill
