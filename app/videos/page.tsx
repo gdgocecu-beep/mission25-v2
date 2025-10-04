@@ -1,226 +1,127 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Heart, MessageCircle, Bookmark, Share2, Play, Pause } from "lucide-react"
-import { translations, type Language } from "@/lib/translations"
+import { useState, useEffect, useRef } from "react"
 
 interface Video {
   id: number
   title: string
-  titleAr: string
   description: string
-  descriptionAr: string
-  thumbnail: string
-  likes: string
-  comments: string
-  saves: string
-  shares: string
+  impact: string
+  videoUrl: string
+  embedUrl?: string
+  likes: number
+  comments: number
+  saves: number
+  shares: number
 }
 
 const videos: Video[] = [
   {
     id: 1,
-    title: "Life Aboard the ISS",
-    titleAr: "الحياة على متن محطة الفضاء الدولية",
-    description: "Experience daily routines of astronauts in microgravity",
-    descriptionAr: "اختبر الروتين اليومي لرواد الفضاء في الجاذبية الصغرى",
-    thumbnail: "/astronaut-floating-inside-iss-module.jpg",
-    likes: "20.5K",
-    comments: "228",
-    saves: "1.2K",
-    shares: "490",
+    title: "Short: Water from Space",
+    description: "How NASA's view from space saves water on Earth",
+    impact: "Micro-moments from orbit",
+    videoUrl: "",
+    embedUrl:
+      "https://www.youtube.com/embed/Cy1vueAtA3k?autoplay=1&controls=0&rel=0&playsinline=1&loop=1&playlist=Cy1vueAtA3k",
+    likes: 0,
+    comments: 0,
+    saves: 0,
+    shares: 0,
   },
   {
     id: 2,
-    title: "Earth from the Cupola",
-    titleAr: "الأرض من كوبولا",
-    description: "Breathtaking views of our planet from space",
-    descriptionAr: "مناظر خلابة لكوكبنا من الفضاء",
-    thumbnail: "/stunning-earth-view-from-iss-cupola-window.jpg",
-    likes: "45.2K",
-    comments: "512",
-    saves: "3.4K",
-    shares: "890",
-  },
-  {
-    id: 3,
-    title: "Spacewalk Training",
-    titleAr: "تدريب السير في الفضاء",
-    description: "Watch astronauts prepare for EVA missions",
-    descriptionAr: "شاهد رواد الفضاء يستعدون لمهام السير في الفضاء",
-    thumbnail: "/astronaut-in-spacesuit-during-spacewalk-with-earth.jpg",
-    likes: "32.8K",
-    comments: "345",
-    saves: "2.1K",
-    shares: "670",
-  },
-  {
-    id: 4,
-    title: "Science Experiments",
-    titleAr: "التجارب العلمية",
-    description: "Discover groundbreaking research in orbit",
-    descriptionAr: "اكتشف الأبحاث الرائدة في المدار",
-    thumbnail: "/astronaut-conducting-science-experiment-in-iss-lab.jpg",
-    likes: "18.9K",
-    comments: "189",
-    saves: "980",
-    shares: "340",
+    title: "Short: Space Moments",
+    description: "Short clip",
+    impact: "Micro-moments",
+    videoUrl: "",
+    embedUrl:
+      "https://www.youtube.com/embed/xXNbNVJuikQ?autoplay=1&controls=0&rel=0&playsinline=1&loop=1&playlist=xXNbNVJuikQ",
+    likes: 0,
+    comments: 0,
+    saves: 0,
+    shares: 0,
   },
 ]
 
-export default function VideosPage() {
-  const router = useRouter()
-  const [userData, setUserData] = useState<{ name: string; age: string; language: string } | null>(null)
-  const [currentVideo, setCurrentVideo] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [likedVideos, setLikedVideos] = useState<Set<number>>(new Set())
-  const [savedVideos, setSavedVideos] = useState<Set<number>>(new Set())
+export default function BenefitsPage() {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const containerRef = useRef<HTMLDivElement>(null)
+  const touchStartY = useRef(0)
+  const [isTransitioning, setIsTransitioning] = useState(false)
 
-  const language = (userData?.language === "Arabic" ? "ar" : "en") as Language
-  const t = translations[language]
-  const isRTL = language === "ar"
+  const scrollToIndex = (index: number) => {
+    if (index < 0 || index >= videos.length || isTransitioning) return
+    setIsTransitioning(true)
+    setCurrentIndex(index)
+    setTimeout(() => setIsTransitioning(false), 300)
+  }
+
+  const handleWheel = (e: WheelEvent) => {
+    e.preventDefault()
+    if (isTransitioning) return
+
+    if (e.deltaY > 0 && currentIndex < videos.length - 1) {
+      scrollToIndex(currentIndex + 1)
+    } else if (e.deltaY < 0 && currentIndex > 0) {
+      scrollToIndex(currentIndex - 1)
+    }
+  }
+
+  const handleTouchStart = (e: TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY
+  }
+
+  const handleTouchEnd = (e: TouchEvent) => {
+    const touchEndY = e.changedTouches[0].clientY
+    const diff = touchStartY.current - touchEndY
+
+    if (Math.abs(diff) > 50) {
+      if (diff > 0 && currentIndex < videos.length - 1) {
+        scrollToIndex(currentIndex + 1)
+      } else if (diff < 0 && currentIndex > 0) {
+        scrollToIndex(currentIndex - 1)
+      }
+    }
+  }
 
   useEffect(() => {
-    const data = sessionStorage.getItem("userData")
-    if (data) {
-      setUserData(JSON.parse(data))
-    } else {
-      router.push("/")
+    const container = containerRef.current
+    if (!container) return
+
+    container.addEventListener("wheel", handleWheel, { passive: false })
+    container.addEventListener("touchstart", handleTouchStart)
+    container.addEventListener("touchend", handleTouchEnd)
+
+    return () => {
+      container.removeEventListener("wheel", handleWheel)
+      container.removeEventListener("touchstart", handleTouchStart)
+      container.removeEventListener("touchend", handleTouchEnd)
     }
-  }, [router])
+  }, [currentIndex, isTransitioning])
 
-  const handleLike = (videoId: number) => {
-    setLikedVideos((prev) => {
-      const newSet = new Set(prev)
-      if (newSet.has(videoId)) {
-        newSet.delete(videoId)
-      } else {
-        newSet.add(videoId)
-      }
-      return newSet
-    })
-  }
-
-  const handleSave = (videoId: number) => {
-    setSavedVideos((prev) => {
-      const newSet = new Set(prev)
-      if (newSet.has(videoId)) {
-        newSet.delete(videoId)
-      } else {
-        newSet.add(videoId)
-      }
-      return newSet
-    })
-  }
-
-  const handleScroll = (e: React.WheelEvent) => {
-    if (e.deltaY > 0 && currentVideo < videos.length - 1) {
-      setCurrentVideo(currentVideo + 1)
-      setIsPlaying(false)
-    } else if (e.deltaY < 0 && currentVideo > 0) {
-      setCurrentVideo(currentVideo - 1)
-      setIsPlaying(false)
-    }
-  }
-
-  if (!userData) return null
-
-  const video = videos[currentVideo]
+  const currentVideo = videos[currentIndex]
 
   return (
-    <main
-      className={`h-screen overflow-hidden bg-black text-white relative font-space-grotesk ${isRTL ? "rtl" : "ltr"}`}
-      onWheel={handleScroll}
-    >
-      <div className="h-full w-full flex items-center justify-center bg-black">
-        <div className="relative w-full max-w-[500px] h-full bg-gradient-to-b from-slate-900 to-black">
-          {/* Video/Image */}
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage: `url(${video.thumbnail})`,
-            }}
-          >
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80" />
-          </div>
+    <main ref={containerRef} className="h-screen w-screen overflow-hidden bg-black relative">
+      <iframe
+        src={currentVideo.embedUrl}
+        title={currentVideo.title}
+        className="absolute inset-0 w-full h-full"
+        allow="autoplay; encrypted-media; fullscreen"
+        sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+      />
 
-          {/* Play/Pause overlay */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <button
-              onClick={() => setIsPlaying(!isPlaying)}
-              className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center hover:bg-white/30 transition-all"
-            >
-              {isPlaying ? <Pause className="w-10 h-10 text-white" /> : <Play className="w-10 h-10 text-white ml-1" />}
-            </button>
-          </div>
-
-          {/* Bottom info */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
-            <h2 className="text-2xl font-bold mb-2 font-orbitron">{language === "ar" ? video.titleAr : video.title}</h2>
-            <p className="text-sm text-slate-300 mb-4">{language === "ar" ? video.descriptionAr : video.description}</p>
-
-            <Button
-              onClick={() => router.push("/quiz")}
-              size="lg"
-              className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 font-bold font-orbitron"
-            >
-              Continue to Quiz
-            </Button>
-          </div>
-
-          <div className={`absolute bottom-32 ${isRTL ? "left-4" : "right-4"} flex flex-col gap-6 z-20`}>
-            {/* Like */}
-            <button onClick={() => handleLike(video.id)} className="flex flex-col items-center gap-1 group">
-              <div className="w-14 h-14 rounded-full bg-slate-800/50 backdrop-blur-sm flex items-center justify-center hover:bg-slate-700/50 transition-all">
-                <Heart
-                  className={`w-7 h-7 ${likedVideos.has(video.id) ? "fill-red-500 text-red-500" : "text-white"} group-hover:scale-110 transition-transform`}
-                />
-              </div>
-              <span className="text-xs font-bold text-white">{video.likes}</span>
-            </button>
-
-            {/* Comment */}
-            <button className="flex flex-col items-center gap-1 group">
-              <div className="w-14 h-14 rounded-full bg-slate-800/50 backdrop-blur-sm flex items-center justify-center hover:bg-slate-700/50 transition-all">
-                <MessageCircle className="w-7 h-7 text-white group-hover:scale-110 transition-transform" />
-              </div>
-              <span className="text-xs font-bold text-white">{video.comments}</span>
-            </button>
-
-            {/* Save */}
-            <button onClick={() => handleSave(video.id)} className="flex flex-col items-center gap-1 group">
-              <div className="w-14 h-14 rounded-full bg-slate-800/50 backdrop-blur-sm flex items-center justify-center hover:bg-slate-700/50 transition-all">
-                <Bookmark
-                  className={`w-7 h-7 ${savedVideos.has(video.id) ? "fill-yellow-500 text-yellow-500" : "text-white"} group-hover:scale-110 transition-transform`}
-                />
-              </div>
-              <span className="text-xs font-bold text-white">{video.saves}</span>
-            </button>
-
-            {/* Share */}
-            <button className="flex flex-col items-center gap-1 group">
-              <div className="w-14 h-14 rounded-full bg-slate-800/50 backdrop-blur-sm flex items-center justify-center hover:bg-slate-700/50 transition-all">
-                <Share2 className="w-7 h-7 text-white group-hover:scale-110 transition-transform" />
-              </div>
-              <span className="text-xs font-bold text-white">{video.shares}</span>
-            </button>
-          </div>
-
-          {/* Video progress indicator */}
-          <div className="absolute top-4 left-4 right-4 flex gap-1 z-20">
-            {videos.map((_, index) => (
-              <div
-                key={index}
-                className={`h-1 flex-1 rounded-full ${index === currentVideo ? "bg-white" : "bg-white/30"}`}
-              />
-            ))}
-          </div>
-        </div>
+      {/* simple top dots to switch videos */}
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+        {videos.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => scrollToIndex(i)}
+            className={`h-1 rounded-full transition-all duration-300 ${i === currentIndex ? "w-8 bg-white" : "w-1 bg-white/40"}`}
+            aria-label={`Go to video ${i + 1}`}
+          />
+        ))}
       </div>
     </main>
   )

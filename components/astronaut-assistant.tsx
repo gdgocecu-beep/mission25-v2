@@ -138,7 +138,7 @@ export default function AstronautAssistant() {
 
   return (
     <>
-      <div className="fixed bottom-6 right-6 z-50">
+      <div className={`fixed bottom-6 ${language === "ar" ? "left-6" : "right-6"} z-50`}>
         <div className="relative">
           <div className="relative">
             <Image
@@ -149,7 +149,7 @@ export default function AstronautAssistant() {
               className="drop-shadow-2xl rounded-full"
               onClick={() => setChatOpen(true)}
             />
-            <div className="absolute -top-2 -right-2 bg-cyan-500 text-white text-xs font-bold px-2 py-1 rounded-full font-orbitron">
+            <div className={`absolute -top-2 ${language === "ar" ? "-left-2" : "-right-2"} bg-cyan-500 text-white text-xs font-bold px-2 py-1 rounded-full font-orbitron`}>
               Zero G
             </div>
           </div>
@@ -172,8 +172,8 @@ export default function AstronautAssistant() {
 
       {/* Chat modal */}
       {chatOpen && (
-        <div className="fixed inset-0 z-60 flex items-end justify-end p-6">
-          <div className="w-full max-w-md bg-slate-900/95 rounded-2xl shadow-2xl border border-slate-700 p-4 backdrop-blur-lg text-white">
+        <div className={`fixed inset-0 z-60 flex items-end ${language === "ar" ? "justify-start" : "justify-end"} p-6`}>
+          <div className={`w-full max-w-md bg-slate-900/95 rounded-2xl shadow-2xl border border-slate-700 p-4 backdrop-blur-lg text-white ${language === "ar" ? "text-right" : "text-left"}`}>
             <div className="flex items-center gap-3 mb-3">
               <Image src="/zero-g-chat.png" alt="Zero G" width={48} height={48} className="rounded-full" />
               <div className="flex-1">

@@ -20,16 +20,61 @@ interface Video {
   shares: number
 }
 
-const defaultVideos: Video[] = [
+const videos: Video[] = [
+  {
+    id: 1,
+    title: "Wildfire Monitoring",
+    description: "Real-time tracking from space saves lives",
+    impact: "Saved thousands of lives worldwide",
+    videoUrl: "/wildfire-from-space-satellite-view.jpg",
+    likes: 20500,
+    comments: 228,
+    saves: 1228,
+    shares: 490,
+  },
 
   {
+    id: 2,
+    title: "Smart Farming",
+    description: "ECOSTRESS optimizes irrigation",
+    impact: "30% water efficiency improvement",
+    videoUrl: "/agricultural-fields-from-space-green-crops.jpg",
+    likes: 18300,
+    comments: 156,
+    saves: 892,
+    shares: 345,
+  },
+  {
+    id: 3,
+    title: "Hurricane Tracking",
+    description: "Early warning systems",
+    impact: "Critical evacuation time",
+    videoUrl: "/hurricane-from-space-satellite-view.jpg",
+    likes: 25100,
+    comments: 412,
+    saves: 1567,
+    shares: 678,
+  },
+
+  {
+    id: 5,
+    title: "Ocean Health",
+    description: "Coral reef monitoring",
+    impact: "Protected marine ecosystems",
+    videoUrl: "/ocean-and-coral-reefs-from-space.jpg",
+    likes: 22400,
+    comments: 301,
+    saves: 1134,
+    shares: 521,
+  },
+  {
     id: 6,
-    title: "Scott Kelly: A Year in Space and the Limits of Human Endurance - Zero-G",
+    title: "Astro Short 1",
     description: "Short: space highlights (EN)",
     impact: "Micro-moments from orbit",
     videoUrl: "/nbl-astronaut.jpg",
     embedUrl:
-      "https://www.youtube.com/embed/4TOPmxoSGk8?autoplay=1&mute=1&controls=0&rel=0&playsinline=1&loop=1&playlist=4TOPmxoSGk8",
+      "https://www.youtube.com/embed/4TOPmxoSGk8?autoplay=1&controls=0&rel=0&playsinline=1&loop=1&playlist=4TOPmxoSGk8",
     likes: 3200,
     comments: 45,
     saves: 120,
@@ -37,12 +82,12 @@ const defaultVideos: Video[] = [
   },
   {
     id: 7,
-    title: "Fire in Space: What Happens When Gravity Disappears? - Zero-G",
+    title: "Astro Short 2",
     description: "Short: astronaut moments (EN)",
     impact: "Inspiring glimpses",
     videoUrl: "/nbl-astronaut.jpg",
     embedUrl:
-      "https://www.youtube.com/embed/GtK0SevWnbM?autoplay=1&mute=1&controls=0&rel=0&playsinline=1&loop=1&playlist=GtK0SevWnbM",
+      "https://www.youtube.com/embed/GtK0SevWnbM?autoplay=1&controls=0&rel=0&playsinline=1&loop=1&playlist=GtK0SevWnbM",
     likes: 4100,
     comments: 82,
     saves: 210,
@@ -50,80 +95,16 @@ const defaultVideos: Video[] = [
   },
   {
     id: 8,
-    title: "Secrets Above the Storms: What We Never See - Zero G",
+    title: "Astro Short 3",
     description: "Short: Earth from space (EN)",
     impact: "Planetary perspective",
     videoUrl: "/nbl-astronaut.jpg",
     embedUrl:
-      "https://www.youtube.com/embed/bnNZ6QrTGBw?autoplay=1&mute=1&controls=0&rel=0&playsinline=1&loop=1&playlist=bnNZ6QrTGBw",
+      "https://www.youtube.com/embed/bnNZ6QrTGBw?autoplay=1&controls=0&rel=0&playsinline=1&loop=1&playlist=bnNZ6QrTGBw",
     likes: 2800,
     comments: 60,
     saves: 98,
     shares: 20,
-  },
-    {
-    id: 9,
-    title: "من الفضاء: أسرار الأرض التي تكشفها ناسا - zero - g",
-    description: "Short: Earth from space (EN)",
-    impact: "Planetary perspective",
-    videoUrl: "/nbl-astronaut.jpg",
-    embedUrl:
-      "https://www.youtube.com/embed/Cy1vueAtA3k?autoplay=1&mute=1&controls=0&rel=0&playsinline=1&loop=1&playlist=Cy1vueAtA3k",
-    likes: 2800,
-    comments: 60,
-    saves: 98,
-    shares: 20,
-  },
-]
-
-const arabicVideos: Video[] = [
-  {
-    id: 100,
-    title: "Arabic Short 1",
-    description: "Short (AR)",
-    impact: "",
-    videoUrl: "/nbl-astronaut.jpg",
-    embedUrl: "https://www.youtube.com/embed/YUxVBZfRm_c?autoplay=1&mute=1&controls=0&rel=0&playsinline=1&loop=1&playlist=YUxVBZfRm_c",
-    likes: 120,
-    comments: 5,
-    saves: 10,
-    shares: 2,
-  },
-  {
-    id: 101,
-    title: "Arabic Short 2",
-    description: "Short (AR)",
-    impact: "",
-    videoUrl: "/nbl-astronaut.jpg",
-    embedUrl: "https://www.youtube.com/embed/h0Rt4dQyeZg?autoplay=1&mute=1&controls=0&rel=0&playsinline=1&loop=1&playlist=h0Rt4dQyeZg",
-    likes: 95,
-    comments: 3,
-    saves: 6,
-    shares: 1,
-  },
-  {
-    id: 102,
-    title: "Arabic Short 3",
-    description: "Short (AR)",
-    impact: "",
-    videoUrl: "/nbl-astronaut.jpg",
-    embedUrl: "https://www.youtube.com/embed/10gUC4f-vHQ?autoplay=1&mute=1&controls=0&rel=0&playsinline=1&loop=1&playlist=10gUC4f-vHQ",
-    likes: 140,
-    comments: 8,
-    saves: 18,
-    shares: 4,
-  },
-  {
-    id: 103,
-    title: "Arabic Short 4",
-    description: "Short (AR)",
-    impact: "",
-    videoUrl: "/nbl-astronaut.jpg",
-    embedUrl: "https://www.youtube.com/embed/qyOjqI4lYSs?autoplay=1&mute=1&controls=0&rel=0&playsinline=1&loop=1&playlist=qyOjqI4lYSs",
-    likes: 78,
-    comments: 2,
-    saves: 5,
-    shares: 0,
   },
 ]
 
@@ -131,22 +112,18 @@ export default function BenefitsPage() {
   const router = useRouter()
   const [playerReady, setPlayerReady] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [videos, setVideos] = useState<Video[]>(defaultVideos)
   const containerRef = useRef<HTMLDivElement>(null)
   const touchStartY = useRef(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [userLiked, setUserLiked] = useState<Record<number, boolean>>({})
   const [userSaved, setUserSaved] = useState<Record<number, boolean>>({})
   const [videoStats, setVideoStats] = useState<Record<number, Video>>(
-    defaultVideos.reduce((acc: Record<number, Video>, v) => ({ ...acc, [v.id]: v }), {}),
+    videos.reduce((acc, v) => ({ ...acc, [v.id]: v }), {}),
   )
   const [isMuted, setIsMuted] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const playerRef = useRef<any>(null)
-  const currentVideo = videoStats[videos[currentIndex]?.id] || videos[currentIndex]
-
-  // show a simple hero with two large choices (AstroTok / AstroRead)
-  const [showChoices, setShowChoices] = useState(true)
+  const currentVideo = videoStats[videos[currentIndex].id]
 
   // safety: if mapping isn't ready or index is out of range, show a fallback
   if (!currentVideo) {
@@ -182,44 +159,6 @@ export default function BenefitsPage() {
         audioRef.current.pause()
         audioRef.current = null
       }
-    }
-  }, [])
-
-  // sync videos to the app language (sessionStorage + custom events)
-  useEffect(() => {
-    const applyLang = (lang?: string | null) => {
-      const isAr = lang === "ar" || lang === "Arabic"
-      if (isAr) {
-        setVideos(arabicVideos)
-        setVideoStats(arabicVideos.reduce((acc: Record<number, Video>, v) => ({ ...acc, [v.id]: v }), {}))
-        setCurrentIndex(0)
-      } else {
-        setVideos(defaultVideos)
-        setVideoStats(defaultVideos.reduce((acc: Record<number, Video>, v) => ({ ...acc, [v.id]: v }), {}))
-        setCurrentIndex(0)
-      }
-    }
-
-    try {
-      const langKey = sessionStorage.getItem("language")
-      applyLang(langKey)
-    } catch {}
-
-    const onCustom = (e: Event) => {
-      const detail = (e as CustomEvent).detail
-      applyLang(detail)
-    }
-
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === "language") applyLang(e.newValue)
-    }
-
-    window.addEventListener("language-change", onCustom as EventListener)
-    window.addEventListener("storage", onStorage)
-
-    return () => {
-      window.removeEventListener("language-change", onCustom as EventListener)
-      window.removeEventListener("storage", onStorage)
     }
   }, [])
 
@@ -431,22 +370,6 @@ export default function BenefitsPage() {
     })
   }
 
-  const shareVideo = async (v: Video) => {
-    const url = v.embedUrl || window.location.href
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: v.title, text: v.description, url })
-      } else if (navigator.clipboard) {
-        await navigator.clipboard.writeText(url)
-        alert('Link copied to clipboard')
-      } else {
-        prompt('Copy this link', url)
-      }
-    } catch (e) {
-      console.warn('Share failed', e)
-    }
-  }
-
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
@@ -471,90 +394,121 @@ export default function BenefitsPage() {
   }
 
   return (
-    <main ref={containerRef} className="h-screen w-screen overflow-hidden bg-black relative">
-      <iframe
-        src={getEmbedSrc(currentVideo.embedUrl)}
-        title={currentVideo.title}
-        className="absolute inset-0 w-full h-full"
-        allow="autoplay; encrypted-media; fullscreen"
-        sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-      />
+    <main
+      ref={containerRef}
+      className="h-screen w-screen overflow-hidden bg-black text-white relative font-space-grotesk"
+    >
+      <div className="absolute inset-0 transition-all duration-500 ease-out">
+        {currentVideo.embedUrl ? (
+          <div className="absolute inset-0">
+            <iframe
+              id={`yt-player`}
+              src={getEmbedSrc(currentVideo.embedUrl)}
+              title={currentVideo.title}
+              className="w-full h-full"
+              allow="autoplay; encrypted-media; fullscreen"
+              sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+            />
+            <div className="absolute inset-0 bg-black/20" />
+          </div>
+        ) : (
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `url(${currentVideo.videoUrl})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+            <div className="absolute inset-0 bg-black/40" />
+          </div>
+        )}
+      </div>
 
-      {/* transparent overlay to capture wheel/touch over the iframe so scrolling moves videos */}
-      <div
-        className="absolute inset-0 z-20"
-        onWheel={(e) => {
-          e.preventDefault()
-          if (isTransitioning) return
-          if (e.deltaY > 0 && currentIndex < videos.length - 1) scrollToIndex(currentIndex + 1)
-          else if (e.deltaY < 0 && currentIndex > 0) scrollToIndex(currentIndex - 1)
-        }}
-        onTouchStart={(e) => {
-          // forward to touch handlers
-          touchStartY.current = e.touches[0].clientY
-        }}
-        onTouchEnd={(e) => {
-          const touchEndY = e.changedTouches[0].clientY
-          const diff = touchStartY.current - touchEndY
-          if (Math.abs(diff) > 50) {
-            if (diff > 0 && currentIndex < videos.length - 1) scrollToIndex(currentIndex + 1)
-            else if (diff < 0 && currentIndex > 0) scrollToIndex(currentIndex - 1)
-          }
-        }}
-        style={{ background: 'transparent' }}
-      />
-
-      {/* right-side action buttons: like, comment, save, share */}
-      <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex flex-col gap-6 z-30">
+      <div className="absolute right-4 bottom-32 flex flex-col gap-6 z-20">
         <button
           onClick={() => handleLike(currentVideo.id)}
           className="flex flex-col items-center gap-1 transition-transform hover:scale-110 active:scale-95"
-          aria-label="Like"
         >
-          <div className={`w-14 h-14 rounded-full flex items-center justify-center ${userLiked[currentVideo.id] ? 'bg-red-500/40' : 'bg-white/20'}`}>
-            <Heart className={`h-7 w-7 ${userLiked[currentVideo.id] ? 'fill-red-500 text-red-500' : 'text-white'}`} />
+          <div
+            className={`w-14 h-14 rounded-full flex items-center justify-center backdrop-blur-md transition-all ${
+              userLiked[currentVideo.id] ? "bg-red-500/40" : "bg-white/20"
+            }`}
+          >
+            <Heart className={`h-7 w-7 ${userLiked[currentVideo.id] ? "fill-red-500 text-red-500" : "text-white"}`} />
           </div>
-          <span className="text-xs text-white">{formatNumber(currentVideo.likes)}</span>
+          <span className="text-sm font-bold text-white drop-shadow-lg">{formatNumber(currentVideo.likes)}</span>
         </button>
 
-        <button className="flex flex-col items-center gap-1 transition-transform hover:scale-110 active:scale-95" aria-label="Comments">
-          <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center">
-            <MessageCircle className="h-6 w-6 text-white" />
+        <button className="flex flex-col items-center gap-1 transition-transform hover:scale-110 active:scale-95">
+          <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+            <MessageCircle className="h-7 w-7 text-white" />
           </div>
-          <span className="text-xs text-white">{formatNumber(currentVideo.comments)}</span>
+          <span className="text-sm font-bold text-white drop-shadow-lg">{formatNumber(currentVideo.comments)}</span>
         </button>
 
-        <button onClick={() => handleSave(currentVideo.id)} className="flex flex-col items-center gap-1 transition-transform hover:scale-110 active:scale-95" aria-label="Save">
-          <div className={`w-14 h-14 rounded-full flex items-center justify-center ${userSaved[currentVideo.id] ? 'bg-yellow-500/40' : 'bg-white/20'}`}>
-            <Bookmark className={`h-6 w-6 ${userSaved[currentVideo.id] ? 'fill-yellow-500 text-yellow-500' : 'text-white'}`} />
+        <button
+          onClick={() => handleSave(currentVideo.id)}
+          className="flex flex-col items-center gap-1 transition-transform hover:scale-110 active:scale-95"
+        >
+          <div
+            className={`w-14 h-14 rounded-full flex items-center justify-center backdrop-blur-md transition-all ${
+              userSaved[currentVideo.id] ? "bg-yellow-500/40" : "bg-white/20"
+            }`}
+          >
+            <Bookmark
+              className={`h-7 w-7 ${userSaved[currentVideo.id] ? "fill-yellow-500 text-yellow-500" : "text-white"}`}
+            />
           </div>
-          <span className="text-xs text-white">{formatNumber(currentVideo.saves)}</span>
+          <span className="text-sm font-bold text-white drop-shadow-lg">{formatNumber(currentVideo.saves)}</span>
         </button>
 
-        <button onClick={() => shareVideo(currentVideo)} className="flex flex-col items-center gap-1 transition-transform hover:scale-110 active:scale-95" aria-label="Share">
-          <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center">
-            <Share2 className="h-6 w-6 text-white" />
+        <button className="flex flex-col items-center gap-1 transition-transform hover:scale-110 active:scale-95">
+          <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+            <Share2 className="h-7 w-7 text-white" />
           </div>
-          <span className="text-xs text-white">Share</span>
+          <span className="text-sm font-bold text-white drop-shadow-lg">{formatNumber(currentVideo.shares)}</span>
         </button>
       </div>
 
-      {/* up/down scroll buttons */}
-      <div className="absolute right-4 bottom-32 flex flex-col gap-4 z-30">
-        <button
-          onClick={() => scrollToIndex(Math.max(0, currentIndex - 1))}
-          className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30"
-          aria-label="Previous video"
-        >
-          ▲
-        </button>
-        <button
-          onClick={() => scrollToIndex(Math.min(videos.length - 1, currentIndex + 1))}
-          className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30"
-          aria-label="Next video"
-        >
-          ▼
-        </button>
+      <button
+        onClick={() => setIsMuted(!isMuted)}
+        className="absolute top-6 left-6 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/30 transition-all"
+      >
+        {isMuted ? <VolumeX className="h-6 w-6 text-white" /> : <Volume2 className="h-6 w-6 text-white" />}
+      </button>
+      {/* explicit user-gesture button to enable video sound when autoplay is blocked */}
+      {currentVideo && currentVideo.id === 6 && (
+        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30">
+          {!playerReady || isMuted ? (
+            <button
+              onClick={enableVideoSound}
+              className="px-4 py-2 rounded-full bg-white/20 backdrop-blur-md text-sm hover:bg-white/30 transition-all"
+            >
+              Enable Video Sound
+            </button>
+          ) : null}
+        </div>
+      )}
+
+      <div className="relative h-full flex flex-col justify-end p-6 pb-32">
+        <div className="max-w-md space-y-3 animate-fade-in">
+          <h2 className="text-3xl font-bold leading-tight font-orbitron drop-shadow-lg">{currentVideo.title}</h2>
+          <p className="text-lg font-light drop-shadow-lg">{currentVideo.description}</p>
+          <div className="inline-block px-4 py-2 bg-white/20 backdrop-blur-md rounded-full border border-white/30">
+            <p className="text-sm font-semibold">{currentVideo.impact}</p>
+          </div>
+        </div>
+
+        {currentIndex === videos.length - 1 && (
+          <Button
+            onClick={() => router.push("/quiz")}
+            size="lg"
+            className="mt-6 h-14 px-12 text-lg bg-white text-black hover:bg-white/90 font-bold font-orbitron"
+          >
+            Take the Quiz
+          </Button>
+        )}
       </div>
 
       <div className="absolute top-6 left-1/2 -translate-x-1/2 flex gap-2 z-20">
@@ -562,23 +516,13 @@ export default function BenefitsPage() {
           <button
             key={i}
             onClick={() => scrollToIndex(i)}
-            className={`h-1 rounded-full transition-all duration-300 ${i === currentIndex ? "w-8 bg-white" : "w-1 bg-white/40"}`}
+            className={`h-1 rounded-full transition-all duration-300 ${
+              i === currentIndex ? "w-8 bg-white" : "w-1 bg-white/40"
+            }`}
             aria-label={`Go to video ${i + 1}`}
           />
         ))}
       </div>
-
-      {currentIndex === videos.length - 1 && (
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-40">
-          <Button
-            onClick={() => router.push('/quiz')}
-            size="lg"
-            className="px-8 py-3 bg-white text-black font-bold rounded-full"
-          >
-            Take the Quiz
-          </Button>
-        </div>
-      )}
     </main>
   )
 }
