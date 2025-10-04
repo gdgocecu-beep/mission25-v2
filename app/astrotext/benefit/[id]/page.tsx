@@ -89,6 +89,15 @@ export default function BenefitPage({ params }: { params: { id: string } }) {
         </div>
       </div>
 
+
+      {benefit.video_link && <Link
+          href="/astrotext" 
+          className="flex items-center text-primary hover:underline"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to benefits
+        </Link>}
+
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="stars-small" />
         <div className="stars-medium" />

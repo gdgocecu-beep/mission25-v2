@@ -66,7 +66,7 @@ const cityData: Record<
     name: "Paris",
     country: "France",
     flag: "🇫🇷",
-    image: "https://images-assets.nasa.gov/image/PIA11168/PIA11168~large.jpg",
+    image: "https://images-assets.nasa.gov/image/PIA11168/PIA11168~medium.jpg",
     description: "In 2017, astronauts photographed Paris's historic layout from space, highlighting its unique urban planning. These images aided in preserving cultural heritage while adapting the city for climate change challenges.",
     year: "2017",
   },
@@ -317,6 +317,8 @@ export default function CupolaPage() {
           {/* Render the interactive Earth globe here */}
    <EarthGlobe
   fill
+  autoRotate
+  autoRotateSpeed={0.6}
   pointRadius={0.5}
   onCitySelect={(location: any) => {
     const cityName = location.name.toLowerCase();
