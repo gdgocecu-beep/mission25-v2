@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Loader2 } from "lucide-react"
+import { Loader2, Search } from "lucide-react"
 import dynamic from 'next/dynamic'
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -17,124 +17,98 @@ interface EarthImage {
   year: string
   description: string
   country: string
-  stats: {
-    altitude: string
-    speed: string
-    orbit: string
-    photos: string
-  }
 }
 
-const countryData: Record<
+const cityData: Record<
   string,
   {
     name: string
+    country: string
     flag: string
-    images: string[]
-    descriptions: string[]
-    years: string[]
+    image: string
+    description: string
+    year: string
   }
 > = {
-  egypt: {
-    name: "Egypt",
+  cairo: {
+    name: "Cairo",
+    country: "Egypt",
     flag: "🇪🇬",
-    images: ["/egypt-cupola.jpg"],
-    descriptions: [
-      "The Nile River illuminates Egypt like a golden ribbon across the desert. Cairo's bright lights mark one of Africa's largest cities. This imagery helps monitor urban expansion and agricultural patterns.",
-      "Egypt's distinctive Nile Delta glows brilliantly at night. Scientists use these images to track water usage, urban growth, and light pollution effects on the ecosystem.",
-    ],
-    years: ["2017", "2019", "2021", "2023"],
+    image: "https://images-assets.nasa.gov/image/iss066e128266/iss066e128266~medium.jpg",
+    description: "The city lights of Cairo and New Cairo City in Egypt were captured during a nighttime orbital pass from the ISS. This observation from 260 miles above the Sinai Peninsula helps scientists track urban growth patterns and energy usage, supporting sustainable development planning for one of Africa's largest metropolitan areas.",
+    year: "2022",
   },
-  usa: {
-    name: "United States",
-    flag: "🇺🇸",
-    images: ["/usa-night.jpg"],
-    descriptions: [
-      "The sprawling metropolis glows across the continent. City grids and highways create intricate light patterns visible from space, helping urban planners understand growth.",
-      "Coastal cities illuminate the shoreline in this stunning view. These images help researchers study energy consumption and urban heat island effects.",
-    ],
-    years: ["2018", "2020", "2022", "2024"],
-  },
-  japan: {
-    name: "Japan",
-    flag: "🇯🇵",
-    images: ["/japan-night.jpg"],
-    descriptions: [
-      "Tokyo's vast urban landscape spreads across the Kanto Plain. The city's efficient lighting creates unique patterns that help researchers study sustainable city planning.",
-      "Japan's island nation glows brilliantly at night. Dense population centers and transportation networks are clearly visible, providing insights into urban development.",
-    ],
-    years: ["2016", "2019", "2021", "2023"],
-  },
-  uk: {
-    name: "United Kingdom",
-    flag: "🇬🇧",
-    images: ["/uk-night.jpg"],
-    descriptions: [
-      "London's Thames River winds through the illuminated city. Historic landmarks and modern developments create a unique nighttime signature visible from orbit.",
-      "The British Isles glow with interconnected cities. These images help monitor urban sprawl and environmental impact across the region.",
-    ],
-    years: ["2017", "2020", "2022", "2024"],
-  },
-  france: {
-    name: "France",
-    flag: "🇫🇷",
-    images: ["/france-night.jpg"],
-    descriptions: [
-      "Paris radiates from the Seine River, with the Eiffel Tower's lights marking the city center. This view showcases Europe's cultural heritage from space.",
-      "France's cities create a network of lights across the countryside. Agricultural regions and urban centers are clearly distinguished in these orbital photographs.",
-    ],
-    years: ["2018", "2020", "2022", "2024"],
-  },
-  germany: {
-    name: "Germany",
-    flag: "🇩🇪",
-    images: ["/germany-night.jpg"],
-    descriptions: [
-      "Berlin's grid pattern and historic landmarks shine through the night. The city's development and green spaces are visible in this ISS capture.",
-      "Germany's industrial heartland glows with activity. These images help researchers understand the balance between urban development and environmental conservation.",
-    ],
-    years: ["2017", "2019", "2021", "2023"],
-  },
-  brazil: {
-    name: "Brazil",
-    flag: "🇧🇷",
-    images: ["/brazil-night.jpg"],
-    descriptions: [
-      "Rio de Janeiro's coastline curves beautifully along the Atlantic. The city's beaches and mountains create a stunning nighttime view from orbit.",
-      "Brazil's vibrant cities illuminate the South American coast. These images help monitor coastal development and environmental changes.",
-    ],
-    years: ["2016", "2019", "2021", "2024"],
-  },
-  australia: {
-    name: "Australia",
-    flag: "🇦🇺",
-    images: ["/australia-night.jpg"],
-    descriptions: [
-      "Sydney Harbor's iconic shape is outlined by city lights. The Opera House and surrounding areas create a distinctive pattern visible from space.",
-      "Australia's coastal cities stand out against the dark interior. These images help researchers study urban concentration and resource distribution.",
-    ],
-    years: ["2018", "2020", "2022", "2024"],
-  },
-  india: {
-    name: "India",
+  delhi: {
+    name: "New Delhi",
+    country: "India",
     flag: "🇮🇳",
-    images: ["/india-night.jpg"],
-    descriptions: [
-      "The Ganges River valley glows with millions of lights. India's rapid urbanization is clearly visible in these nighttime orbital photographs.",
-      "India's cities create a brilliant tapestry of light across the subcontinent. These images help track development and energy usage patterns.",
-    ],
-    years: ["2017", "2019", "2022", "2024"],
+    image: "https://images-assets.nasa.gov/image/PIA21100/PIA21100~large.jpg",
+    description: "In 2020, astronauts on the ISS captured New Delhi's urban growth and air quality patterns. These images helped scientists track pollution levels and their impact on millions of residents, leading to better urban planning and air quality management strategies.",
+    year: "2020",
   },
-  china: {
-    name: "China",
+  beijing: {
+    name: "Beijing",
+    country: "China",
     flag: "🇨🇳",
-    images: ["/china-night.jpg"],
-    descriptions: [
-      "Shanghai's Yangtze River delta blazes with activity. The world's largest cities create stunning light patterns visible from the ISS.",
-      "China's urban centers illuminate the landscape. These images provide insights into the world's most rapid urbanization process.",
-    ],
-    years: ["2016", "2018", "2021", "2023"],
+    image: "https://images-assets.nasa.gov/image/iss026e010155/iss026e010155~large.jpg",
+    description: "ISS astronauts documented Beijing's rapid urban development in 2016. These space-based observations helped city planners understand the heat island effect and implement green spaces to improve air quality and reduce urban temperatures.",
+    year: "2016",
   },
+  tokyo: {
+    name: "Tokyo",
+    country: "Japan",
+    flag: "🇯🇵",
+    image: "https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001701/GSFC_20171208_Archive_e001701~orig.jpg",
+    description: "The ISS captured Tokyo's nighttime illumination patterns in 2019, revealing energy usage across the world's largest metropolitan area. This data helped optimize power distribution and identify opportunities for energy conservation.",
+    year: "2019",
+  },
+  paris: {
+    name: "Paris",
+    country: "France",
+    flag: "🇫🇷",
+    image: "https://images-assets.nasa.gov/image/PIA11168/PIA11168~large.jpg",
+    description: "In 2017, astronauts photographed Paris's historic layout from space, highlighting its unique urban planning. These images aided in preserving cultural heritage while adapting the city for climate change challenges.",
+    year: "2017",
+  },
+  london: {
+    name: "London",
+    country: "United Kingdom",
+    flag: "🇬🇧",
+    image: "https://images-assets.nasa.gov/image/iss073e0698351/iss073e0698351~medium.jpg",
+    description: "The ISS captured London's growth along the Thames in 2014. These observations helped monitor urban sprawl and riverside development, supporting flood management and sustainable city planning.",
+    year: "2014",
+  },
+  berlin: {
+    name: "Berlin",
+    country: "Germany",
+    flag: "🇩🇪",
+    image: "https://images-assets.nasa.gov/image/iss045e027165/iss045e027165~large.jpg",
+    description: "Astronauts photographed Berlin's unique east-west development patterns in 2015. These images helped urban planners understand historical division impacts and guide unified city development strategies.",
+    year: "2015",
+  },
+  newyork: {
+    name: "New York",
+    country: "United States",
+    flag: "🇺🇸",
+    image: "https://images-assets.nasa.gov/image/s36-39-014/s36-39-014~medium.jpg",
+    description: "From space, New York City shines like a galaxy along the coast. In 1990, astronauts on the Space Shuttle Atlantis captured its glowing streets and bridges, showing how much energy the city uses and how far its lights reach. These images help planners fight light pollution, save power, and make the city healthier for people and wildlife.",
+    year: "2015",
+  },
+  sydney: {
+    name: "Sydney",
+    country: "Australia",
+    flag: "🇦🇺",
+    image: "https://images-assets.nasa.gov/image/ast-16-1132/ast-16-1132~medium.jpg",
+    description: "In 1975, during the Apollo–Soyuz mission, astronauts photographed South Australia’s Flinders Ranges and salt lakes from orbit. These images helped scientists study Australia’s dry landscapes, water basins, and land use long before satellites became common. They provided early insights into how desert regions store water and support life in extreme conditions.",
+  },
+  rio: {
+    name: "Rio de Janeiro",
+    country: "Brazil",
+    flag: "🇧🇷",
+    image: "https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000252/GSFC_20171208_Archive_e000252~large.jpg",
+    description: "As Rio prepared for the 2016 Summer Olympics, NASA’s Landsat 8 satellite captured detailed images of the Olympic Park and the city around it. These space views showed how new stadiums, housing, and transportation networks were shaping the coastline. Scientists also used this data to track urban growth and how large events can change land use in big cities.",
+    year: "2016",
+  }
 }
 
 export default function CupolaPage() {
@@ -144,8 +118,7 @@ export default function CupolaPage() {
   )
   const [skipSplash, setSkipSplash] = useState(false)
   const [step, setStep] = useState(1)
-  const [cityInput, setCityInput] = useState("")
-  const [yearInput, setYearInput] = useState("")
+  const [countryInput, setCountryInput] = useState("")
   const [selectedCountry, setSelectedCountry] = useState("")
   const [isSearching, setIsSearching] = useState(false)
   const [currentImage, setCurrentImage] = useState<EarthImage | null>(null)
@@ -165,94 +138,79 @@ export default function CupolaPage() {
   }, [router])
 
   const handleSearch = async () => {
-  if (!cityInput) return
-
-  setIsSearching(true)
+  if (!countryInput) return;
+  setIsSearching(true);
 
   try {
-    // Remove year from the API call
+    // Connect to our backend API
     const response = await fetch(
-      `https://images-api.nasa.gov/search?q=${encodeURIComponent(cityInput)}&media_type=image`
-    )
-    const data = await response.json()
+      `https://mission-25-backend.vercel.app/api/cupola?query=${encodeURIComponent(countryInput)}`
+    );
 
-    if (data.collection.items.length > 0) {
-      const item = data.collection.items[0]
-      const imageUrl = item.links?.[0]?.href || currentImage?.url
-
-      const image: EarthImage = {
-        url: imageUrl,
-        title: item.data[0].title,
-        year: new Date().getFullYear().toString(), // Use current year
-        description: item.data[0].description || "View from the International Space Station",
-        country: cityInput,
-        stats: {
-          altitude: "408 km",
-          speed: "28,000 km/h",
-          orbit: "90 min",
-          photos: "3.5M+",
-        },
-      }
-
-      setCurrentImage(image)
-      setScore((prev) => prev + 25)
-      setStep(2)
-    } else {
-      throw new Error("No images found")
+    if (!response.ok) {
+      throw new Error('Failed to fetch data');
     }
-    } catch (error) {
-      // Fallback to local data
-      const cityLower = cityInput.toLowerCase()
-      let matchedCountry = ""
 
-      if (cityLower.includes("cairo") || cityLower.includes("egypt")) matchedCountry = "egypt"
-      else if (cityLower.includes("new york") || cityLower.includes("los angeles") || cityLower.includes("usa"))
-        matchedCountry = "usa"
-      else if (cityLower.includes("tokyo") || cityLower.includes("japan")) matchedCountry = "japan"
-      else if (cityLower.includes("london") || cityLower.includes("uk")) matchedCountry = "uk"
-      else if (cityLower.includes("paris") || cityLower.includes("france")) matchedCountry = "france"
-      else if (cityLower.includes("berlin") || cityLower.includes("germany")) matchedCountry = "germany"
-      else if (cityLower.includes("rio") || cityLower.includes("brazil")) matchedCountry = "brazil"
-      else if (cityLower.includes("sydney") || cityLower.includes("australia")) matchedCountry = "australia"
-      else if (cityInput.includes("delhi") || cityLower.includes("mumbai") || cityLower.includes("india"))
-        matchedCountry = "india"
-      else if (cityLower.includes("shanghai") || cityLower.includes("beijing") || cityLower.includes("china"))
-        matchedCountry = "china"
+    const data = await response.json();
+
+    // Create image object from API response
+    const image: EarthImage = {
+      url: data.url,
+      title: data.title,
+      year: new Date(data.date_created).getFullYear().toString(),
+      description: data.benefit,
+      country: countryInput,
+    };
+
+    setCurrentImage(image);
+    setScore((prev) => prev + 25);
+    setStep(2);
+
+  } catch (error) {
+     // Keep the existing fallback logic for when API fails
+    const countryLower = countryInput.toLowerCase();
+    let matchedCountry = "";
+
+    // Simplified country matching
+    if (countryLower.includes("egypt")) matchedCountry = "egypt"
+    else if (countryLower.includes("united states") || countryLower.includes("usa")) matchedCountry = "usa"
+    else if (countryLower.includes("japan")) matchedCountry = "japan"
+    else if (countryLower.includes("united kingdom") || countryLower.includes("uk")) matchedCountry = "uk"
+    else if (countryLower.includes("france")) matchedCountry = "france"
+    else if (countryLower.includes("germany")) matchedCountry = "germany"
+    else if (countryLower.includes("brazil")) matchedCountry = "brazil"
+    else if (countryLower.includes("australia")) matchedCountry = "australia"
+    else if (countryLower.includes("india")) matchedCountry = "india"
+    else if (countryLower.includes("china")) matchedCountry = "china"
 
       if (matchedCountry && countryData[matchedCountry]) {
-        const country = countryData[matchedCountry]
-        const randomDescription = country.descriptions[Math.floor(Math.random() * country.descriptions.length)]
+      const country = countryData[matchedCountry];
+      const randomDescription = country.descriptions[Math.floor(Math.random() * country.descriptions.length)];
 
-        const image: EarthImage = {
-          url: country.images[0],
-          title: `${country.name} at Night`,
-          year: yearInput,
-          description: randomDescription,
-          country: country.name,
-          stats: {
-            altitude: "408 km",
-            speed: "28,000 km/h",
-            orbit: "90 min",
-            photos: "3.5M+",
-          },
-        }
+      const image: EarthImage = {
+        url: country.images[0],
+        title: `${country.name} at Night`,
+        year: String(new Date().getFullYear()),
+        description: randomDescription,
+        country: country.name,
+      };
 
-        setCurrentImage(image)
-        setScore((prev) => prev + 25)
-        setStep(2)
+      setCurrentImage(image);
+      setScore((prev) => prev + 25);
+      setStep(2);
+    } else {
+      setAttempts((prev) => prev - 1);
+      if (attempts <= 1) {
+        alert("No more attempts! Moving to next section.");
+        router.push("/benefits");
       } else {
-        setAttempts((prev) => prev - 1)
-        if (attempts <= 1) {
-          alert("No more attempts! Moving to next section.")
-          router.push("/benefits")
-        } else {
-          alert(`City not found! ${attempts - 1} attempts remaining.`)
-        }
+        alert(`City not found! ${attempts - 1} attempts remaining.`);
       }
     }
-
-    setIsSearching(false)
+  } finally {
+    setIsSearching(false);
   }
+};
 
   const handleRandomize = () => {
     // pick a random country from countryData
@@ -266,12 +224,6 @@ export default function CupolaPage() {
       year: String(new Date().getFullYear()),
       description: country.descriptions[Math.floor(Math.random() * country.descriptions.length)],
       country: country.name,
-      stats: {
-        altitude: "408 km",
-        speed: "28,000 km/h",
-        orbit: "90 min",
-        photos: "3.5M+",
-      },
     }
 
     setCurrentImage(image)
@@ -332,17 +284,27 @@ export default function CupolaPage() {
 
         <div className="w-full h-[72vh] rounded-3xl overflow-hidden shadow-2xl bg-black/60 border border-slate-800 relative">
           {/* Overlay search controls (top-right) */}
-          <div className="absolute top-4 left-4 z-20 w-[340px] p-3 rounded-lg bg-black/60 border border-slate-700 backdrop-blur-sm">
-  <div className="flex gap-2">
+          <div className="absolute top-4 left-4 z-20 w-[280px] p-3 rounded-lg bg-black/60 border border-slate-700 backdrop-blur-sm">
+  <div className="flex gap-2 items-center">
     <Input
       type="text"
       placeholder="City (e.g. Cairo)"
-      value={cityInput}
-      onChange={(e) => setCityInput(e.target.value)}
-      className="flex-1 h-10 bg-transparent border-slate-600 text-white"
+      value={countryInput}
+      onChange={(e) => setCountryInput(e.target.value)}
+      className="flex-1 h-9 bg-transparent border-slate-600 text-white"
     />
-  </div>
-  <div className="mt-2 flex gap-2 justify-end">
+    <Button
+      onClick={handleSearch}
+      disabled={!countryInput || isSearching}
+      size="sm"
+      className="h-9 w-9 p-0 bg-gradient-to-r from-cyan-600 to-blue-600 text-white"
+    >
+      {isSearching ? (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      ) : (
+        <Search className="h-4 w-4" />
+      )}
+    </Button>
     <Button
       onClick={handleRandomize}
       size="sm"
@@ -350,77 +312,81 @@ export default function CupolaPage() {
     >
       Random
     </Button>
-    <Button
-      onClick={handleSearch}
-      disabled={!cityInput || isSearching}
-      size="sm"
-      className="h-9 px-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white"
-    >
-      {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Search'}
-    </Button>
   </div>
 </div>
           {/* Render the interactive Earth globe here */}
-          <EarthGlobe
-            fill
-            autoRotate
-            autoRotateSpeed={0.3}
-            pointRadius={0.5}
-            onCitySelect={(city: any) => {
-              // when a city is selected on the globe, populate the UI similar to search success
-              setCurrentImage({
-                url: city.image || '/placeholder.jpg',
-                title: city.name || 'Selected Location',
-                year: String(new Date().getFullYear()),
-                description: city.description || 'View from the ISS',
-                country: city.country || city.name || '—',
-                stats: {
-                  altitude: '408 km',
-                  speed: '28,000 km/h',
-                  orbit: '90 min',
-                  photos: '3.5M+',
-                },
-              })
-              setStep(2)
-              setScore((s) => Math.min(s + 25, 100))
-            }}
-          />
+   <EarthGlobe
+  fill
+  pointRadius={0.5}
+  onCitySelect={(location: any) => {
+    const cityName = location.name.toLowerCase();
+    let matchedCity = "";
+
+    // Match cities
+    if (cityName.includes("cairo")) matchedCity = "cairo"
+else if (cityName.includes("washington")) matchedCity = "washington"
+else if (cityName.includes("sacramento")) matchedCity = "sacramento"
+else if (cityName.includes("delhi")) matchedCity = "delhi"
+else if (cityName.includes("beijing")) matchedCity = "beijing"
+else if (cityName.includes("tokyo")) matchedCity = "tokyo"
+else if (cityName.includes("paris")) matchedCity = "paris"
+else if (cityName.includes("london")) matchedCity = "london"
+else if (cityName.includes("berlin")) matchedCity = "berlin"
+else if (cityName.includes("new york")) matchedCity = "newyork"
+else if (cityName.includes("sydney")) matchedCity = "sydney"
+else if (cityName.includes("rio")) matchedCity = "rio"
+    
+    if (matchedCity && cityData[matchedCity]) {
+      const city = cityData[matchedCity];
+      
+      const image: EarthImage = {
+        url: city.image,
+        title: `${city.name}, ${city.country}`,
+        year: city.year,
+        description: city.description,
+        country: city.country
+      };
+
+      setCurrentImage(image);
+      setStep(2);
+      setScore((s) => Math.min(s + 25, 100));
+    } else {
+      console.log('No data available for:', location.name);
+    }
+  }}
+/>
         </div>
 
         {/* If step 2 and currentImage exists show details below the globe */}
         {step === 2 && currentImage && (
-          <div className="mt-8">
-            <Card className="p-6 bg-slate-900/40 border-slate-700/40 backdrop-blur-xl">
-              <div className="flex flex-col md:flex-row gap-6 items-center">
-                <div className="w-full md:w-1/3">
-                  <Image src={currentImage.url || '/placeholder.svg'} alt={currentImage.title} width={600} height={400} className="rounded-lg object-cover" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold">{currentImage.title}</h3>
-                  <p className="text-slate-300 mt-2">{currentImage.description}</p>
-                  <div className="mt-4 grid grid-cols-2 gap-4">
-                    <div className="p-3 bg-slate-800/50 rounded">Altitude: {currentImage.stats.altitude}</div>
-                    <div className="p-3 bg-slate-800/50 rounded">Speed: {currentImage.stats.speed}</div>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-6 text-right">
-                <Button
-                  onClick={() => {
-                    const finalScore = Math.min(score, 25)
-                    const currentScore = Number.parseInt(sessionStorage.getItem("totalScore") || "0")
-                    sessionStorage.setItem("totalScore", String(Math.min(currentScore + finalScore, 100)))
-                    router.push("/benefits")
-                  }}
-                  size="lg"
-                  className="h-12 px-8 text-base bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 font-bold shadow-lg font-orbitron"
-                >
-                  Continue Mission
-                </Button>
-              </div>
-            </Card>
-          </div>
-        )}
+  <div className="mt-8">
+    <Card className="p-6 bg-slate-900/40 border-slate-700/40 backdrop-blur-xl">
+      <div className="flex flex-col md:flex-row gap-6 items-center">
+        <div className="w-full md:w-1/3">
+          <Image src={currentImage.url || '/placeholder.svg'} alt={currentImage.title} width={600} height={400} className="rounded-lg object-cover" />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-2xl font-bold">{currentImage.title}</h3>
+          <p className="text-slate-300 mt-2">{currentImage.description}</p>
+        </div>
+      </div>
+      <div className="mt-6 text-right">
+        <Button
+          onClick={() => {
+            const finalScore = Math.min(score, 25)
+            const currentScore = Number.parseInt(sessionStorage.getItem("totalScore") || "0")
+            sessionStorage.setItem("totalScore", String(Math.min(currentScore + finalScore, 100)))
+            router.push("/benefits")
+          }}
+          size="lg"
+          className="h-12 px-8 text-base bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 font-bold shadow-lg font-orbitron"
+        >
+          Continue Mission
+        </Button>
+      </div>
+    </Card>
+  </div>
+)}
       </div>
     </main>
   )
