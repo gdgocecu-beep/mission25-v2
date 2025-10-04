@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Heart, MessageCircle, Bookmark, Share2, Volume2, VolumeX } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
 
 interface Video {
   id: number

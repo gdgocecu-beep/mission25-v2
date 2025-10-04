@@ -253,6 +253,31 @@ export default function CupolaPage() {
     setIsSearching(false)
   }
 
+  const handleRandomize = () => {
+    // pick a random country from countryData
+    const keys = Object.keys(countryData)
+    if (!keys.length) return
+    const rand = keys[Math.floor(Math.random() * keys.length)]
+    const country = countryData[rand]
+    const image: EarthImage = {
+      url: country.images[0],
+      title: `${country.name} at Night`,
+      year: String(new Date().getFullYear()),
+      description: country.descriptions[Math.floor(Math.random() * country.descriptions.length)],
+      country: country.name,
+      stats: {
+        altitude: "408 km",
+        speed: "28,000 km/h",
+        orbit: "90 min",
+        photos: "3.5M+",
+      },
+    }
+
+    setCurrentImage(image)
+    setScore((prev) => prev + 25)
+    setStep(2)
+  }
+
   // Always show the Cupola splash until the user explicitly presses Start
   if (!skipSplash) {
     return (
@@ -300,13 +325,40 @@ export default function CupolaPage() {
             <p className="text-cyan-400">Earth's Largest Space Window</p>
           </div>
 
-          <div className="inline-flex items-center gap-2 bg-purple-900/40 px-4 py-2 rounded-full border border-purple-500/40">
-            <Zap className="h-5 w-5 text-yellow-400" />
-            <span className="font-bold font-orbitron">Score: {score}</span>
-          </div>
         </div>
 
-        <div className="w-full h-[72vh] rounded-3xl overflow-hidden shadow-2xl bg-black/60 border border-slate-800">
+        {/* search UI is now an overlay inside the globe container (see below) */}
+
+        <div className="w-full h-[72vh] rounded-3xl overflow-hidden shadow-2xl bg-black/60 border border-slate-800 relative">
+          {/* Overlay search controls (top-right) */}
+          <div className="absolute top-4 left-4 z-20 w-[340px] p-3 rounded-lg bg-black/60 border border-slate-700 backdrop-blur-sm">
+            <div className="flex gap-2">
+              <Input
+                type="text"
+                placeholder="City (e.g. Cairo)"
+                value={cityInput}
+                onChange={(e) => setCityInput(e.target.value)}
+                className="flex-1 h-10 bg-transparent border-slate-600 text-white"
+              />
+            </div>
+            <div className="mt-2 flex gap-2 justify-end">
+              <Button
+                onClick={handleRandomize}
+                size="sm"
+                className="h-9 px-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+              >
+                Random
+              </Button>
+              <Button
+                onClick={handleSearch}
+                disabled={!cityInput || !yearInput || isSearching}
+                size="sm"
+                className="h-9 px-3 bg-gradient-to-r from-cyan-600 to-blue-600 text-white"
+              >
+                {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Search'}
+              </Button>
+            </div>
+          </div>
           {/* Render the interactive Earth globe here */}
           <EarthGlobe
             fill
