@@ -612,14 +612,30 @@ export default function GameCanvas() {
       <canvas ref={canvasRef} className="w-full h-full" />
 
       <div className="absolute top-4 right-4 z-10">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={() => setSoundEnabled(!soundEnabled)}
-          className="bg-slate-900/80 border-cyan-500/30 hover:bg-slate-800/80 hover:border-cyan-400/50 text-cyan-300 rounded-2xl"
-        >
-          {soundEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setSoundEnabled(!soundEnabled)}
+            className="bg-slate-900/80 border-cyan-500/30 hover:bg-slate-800/80 hover:border-cyan-400/50 text-cyan-300 rounded-2xl"
+          >
+            {soundEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+          </Button>
+
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => {
+              if (confirm('Skip the training and proceed to the Cupola?')) {
+                router.push('/cupola')
+              }
+            }}
+            className="bg-slate-900/80 border-rose-500/30 hover:bg-slate-800/80 hover:border-rose-400/50 text-rose-300 rounded-2xl"
+            title="Skip Game"
+          >
+            ⏭
+          </Button>
+        </div>
       </div>
 
       {stage === "gameover" && (

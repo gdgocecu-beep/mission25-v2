@@ -141,6 +141,7 @@ export default function BenefitsPage() {
     defaultVideos.reduce((acc: Record<number, Video>, v) => ({ ...acc, [v.id]: v }), {}),
   )
   const [isMuted, setIsMuted] = useState(false)
+  const [isPlaying, setIsPlaying] = useState(true)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const playerRef = useRef<any>(null)
   const currentVideo = videoStats[videos[currentIndex]?.id] || videos[currentIndex]
@@ -357,16 +358,64 @@ export default function BenefitsPage() {
   }, [isMuted])
 
   const enableVideoSound = () => {
+    // Ensure the YouTube iframe API is loaded and a player exists that we can unmute/play.
     try {
-      const p = playerRef.current
-      if (p) {
-        p.unMute && p.unMute()
-        p.playVideo && p.playVideo()
-      }
-      setIsMuted(false)
-      setPlayerReady(true)
+      loadYouTubeAPI().then(() => {
+        try {
+          const w = (window as any)
+          // If our playerRef isn't set, try to create it (YT will attach to iframe id=yt-player)
+          if (!playerRef.current && w.YT && w.YT.Player) {
+            try {
+              playerRef.current = new w.YT.Player('yt-player')
+            } catch {}
+          }
+
+          const p = playerRef.current
+          if (p) {
+            p.unMute && p.unMute()
+            p.playVideo && p.playVideo()
+          }
+        } catch {}
+        setIsMuted(false)
+        setPlayerReady(true)
+      })
     } catch {}
   }
+
+    // Toggle play/pause for the YouTube player
+    const togglePlay = () => {
+      try {
+        const p = playerRef.current
+        if (p) {
+          if (isPlaying) {
+            p.pauseVideo && p.pauseVideo()
+            setIsPlaying(false)
+          } else {
+            p.playVideo && p.playVideo()
+            setIsPlaying(true)
+          }
+          return
+        }
+
+        // If player isn't created yet, create it and play
+        loadYouTubeAPI().then(() => {
+          const w = (window as any)
+          if (!playerRef.current && w.YT && w.YT.Player) {
+            try {
+              playerRef.current = new w.YT.Player('yt-player')
+            } catch {}
+          }
+          const p2 = playerRef.current
+          p2 && p2.playVideo && p2.playVideo()
+          setIsPlaying(true)
+        })
+      } catch {}
+    }
+
+    useEffect(() => {
+      // assume autoplay when switching videos
+      setIsPlaying(true)
+    }, [currentIndex])
 
   const scrollToIndex = (index: number) => {
     if (index < 0 || index >= videos.length || isTransitioning) return
@@ -473,6 +522,7 @@ export default function BenefitsPage() {
   return (
     <main ref={containerRef} className="h-screen w-screen overflow-hidden bg-black relative">
       <iframe
+        id={`yt-player`}
         src={getEmbedSrc(currentVideo.embedUrl)}
         title={currentVideo.title}
         className="absolute inset-0 w-full h-full"
@@ -506,6 +556,40 @@ export default function BenefitsPage() {
 
       {/* right-side action buttons: like, comment, save, share */}
       <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex flex-col gap-6 z-30">
+        {/* sound toggle */}
+        <button
+          onClick={() => {
+            if (isMuted) {
+              enableVideoSound()
+            } else {
+              try {
+                const p = playerRef.current
+                p && p.mute && p.mute()
+              } catch {}
+              setIsMuted(true)
+            }
+          }}
+          className="flex flex-col items-center gap-1 transition-transform hover:scale-110 active:scale-95"
+          aria-label="Toggle sound"
+        >
+          <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center">
+            {isMuted ? <VolumeX className="h-6 w-6 text-white" /> : <Volume2 className="h-6 w-6 text-white" />}
+          </div>
+          <span className="text-xs text-white">{isMuted ? 'Muted' : 'Sound'}</span>
+        </button>
+
+        {/* play/pause toggle */}
+        <button
+          onClick={togglePlay}
+          className="flex flex-col items-center gap-1 transition-transform hover:scale-110 active:scale-95"
+          aria-label="Play/Pause"
+        >
+          <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center">
+            <span className="text-xl text-white">{isPlaying ? '⏸' : '▶'}</span>
+          </div>
+          <span className="text-xs text-white">{isPlaying ? 'Pause' : 'Play'}</span>
+        </button>
+
         <button
           onClick={() => handleLike(currentVideo.id)}
           className="flex flex-col items-center gap-1 transition-transform hover:scale-110 active:scale-95"
