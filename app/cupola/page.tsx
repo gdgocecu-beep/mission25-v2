@@ -5,6 +5,9 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
+import dynamic from 'next/dynamic'
+// Lazy-load EarthGlobe to avoid increasing initial bundle size
+const EarthGlobe = dynamic(() => import('@/components/earth-globe'), { ssr: false })
 import { ArrowRight, Search, Loader2, MapPin, Zap } from "lucide-react"
 import Image from "next/image"
 
@@ -139,6 +142,7 @@ export default function CupolaPage() {
   const [userData, setUserData] = useState<{ name: string; age: string; country: string; language: string } | null>(
     null,
   )
+  const [skipSplash, setSkipSplash] = useState(false)
   const [step, setStep] = useState(1)
   const [cityInput, setCityInput] = useState("")
   const [yearInput, setYearInput] = useState("")
@@ -155,7 +159,8 @@ export default function CupolaPage() {
       setUserData(parsed)
       setSelectedCountry(parsed.country || "egypt")
     } else {
-      router.push("/")
+      // don't auto-redirect — show a styled splash and let the user start manually
+      // if we later want to force navigation we can add a timer or explicit behaviour
     }
   }, [router])
 
@@ -248,7 +253,37 @@ export default function CupolaPage() {
     setIsSearching(false)
   }
 
-  if (!userData) return null
+  // Always show the Cupola splash until the user explicitly presses Start
+  if (!skipSplash) {
+    return (
+      <main className="min-h-screen w-screen flex items-center justify-center bg-black text-white">
+        <div className="relative w-full h-screen">
+          <Image src="/Cupola.png" alt="Cupola" fill className="object-cover" priority />
+
+          <div className="absolute inset-0 bg-black/40 flex flex-col items-start justify-end p-12">
+            <h1 className="text-5xl md:text-7xl font-orbitron font-bold text-white mb-4">THE CUPOLA</h1>
+            <p className="text-lg text-white/80 mb-6">Earth's Largest Space Window — explore live orbital imagery</p>
+            <div className="flex gap-4">
+              <Button
+                onClick={() => setSkipSplash(true)}
+                size="lg"
+                className="h-14 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold"
+              >
+                Start
+              </Button>
+              <Button
+                onClick={() => router.push("/")}
+                size="lg"
+                className="h-14 bg-white/10 text-white border border-white/20"
+              >
+                Back
+              </Button>
+            </div>
+          </div>
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#000000] via-[#001122] to-[#000000] text-white relative overflow-hidden font-space-grotesk">
@@ -258,155 +293,65 @@ export default function CupolaPage() {
         <div className="stars-large"></div>
       </div>
 
-      <div className="container mx-auto px-4 py-12 relative z-10">
-        <div className="mb-12 text-center space-y-4">
-          <div className="flex justify-center gap-6 items-center mb-6">
-            <Image
-              src="/egypt-cupola.jpg"
-              alt="ISS Cupola Window"
-              width={120}
-              height={120}
-              className="rounded-2xl shadow-2xl border-2 border-cyan-500/50"
-            />
-            <div className="text-6xl">🪟</div>
-            <Image
-              src="/usa-night.jpg"
-              alt="Earth from Cupola"
-              width={120}
-              height={120}
-              className="rounded-2xl shadow-2xl border-2 border-cyan-500/50"
-            />
+      <div className="container mx-auto px-4 py-6 relative z-10">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <h1 className="text-3xl font-bold tracking-tight font-orbitron">THE CUPOLA</h1>
+            <p className="text-cyan-400">Earth's Largest Space Window</p>
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight font-orbitron">THE CUPOLA</h1>
-          <p className="text-xl text-cyan-400 font-light">Earth's Largest Space Window</p>
-          <div className="inline-flex items-center gap-2 bg-purple-900/40 px-6 py-3 rounded-full border border-purple-500/50">
+
+          <div className="inline-flex items-center gap-2 bg-purple-900/40 px-4 py-2 rounded-full border border-purple-500/40">
             <Zap className="h-5 w-5 text-yellow-400" />
             <span className="font-bold font-orbitron">Score: {score}</span>
           </div>
         </div>
 
-        <div className="max-w-5xl mx-auto space-y-8">
-          {step === 1 && (
-            <Card className="p-8 bg-slate-900/40 border-slate-700/40 backdrop-blur-xl">
-              <div className="text-center mb-6">
-                <MapPin className="h-12 w-12 mx-auto mb-4 text-cyan-400" />
-                <h3 className="text-2xl font-bold mb-2 font-orbitron">MISSION BRIEFING</h3>
-                <p className="text-slate-300">Search for a city on Earth using the Cupola's advanced imaging system</p>
-                <div className="mt-4 text-yellow-400 font-bold">Attempts Remaining: {attempts}</div>
+        <div className="w-full h-[72vh] rounded-3xl overflow-hidden shadow-2xl bg-black/60 border border-slate-800">
+          {/* Render the interactive Earth globe here */}
+          <EarthGlobe
+            fill
+            autoRotate
+            autoRotateSpeed={0.3}
+            pointRadius={0.5}
+            onCitySelect={(city: any) => {
+              // when a city is selected on the globe, populate the UI similar to search success
+              setCurrentImage({
+                url: city.image || '/placeholder.jpg',
+                title: city.name || 'Selected Location',
+                year: String(new Date().getFullYear()),
+                description: city.description || 'View from the ISS',
+                country: city.country || city.name || '—',
+                stats: {
+                  altitude: '408 km',
+                  speed: '28,000 km/h',
+                  orbit: '90 min',
+                  photos: '3.5M+',
+                },
+              })
+              setStep(2)
+              setScore((s) => Math.min(s + 25, 100))
+            }}
+          />
+        </div>
+
+        {/* If step 2 and currentImage exists show details below the globe */}
+        {step === 2 && currentImage && (
+          <div className="mt-8">
+            <Card className="p-6 bg-slate-900/40 border-slate-700/40 backdrop-blur-xl">
+              <div className="flex flex-col md:flex-row gap-6 items-center">
+                <div className="w-full md:w-1/3">
+                  <Image src={currentImage.url || '/placeholder.svg'} alt={currentImage.title} width={600} height={400} className="rounded-lg object-cover" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold">{currentImage.title}</h3>
+                  <p className="text-slate-300 mt-2">{currentImage.description}</p>
+                  <div className="mt-4 grid grid-cols-2 gap-4">
+                    <div className="p-3 bg-slate-800/50 rounded">Altitude: {currentImage.stats.altitude}</div>
+                    <div className="p-3 bg-slate-800/50 rounded">Speed: {currentImage.stats.speed}</div>
+                  </div>
+                </div>
               </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-bold mb-2 text-cyan-400">City Name</label>
-                  <Input
-                    type="text"
-                    placeholder="e.g., Cairo, Tokyo, New York..."
-                    value={cityInput}
-                    onChange={(e) => setCityInput(e.target.value)}
-                    className="h-14 bg-slate-800/60 border-slate-600 text-white text-lg"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold mb-2 text-cyan-400">Year</label>
-                  <Input
-                    type="number"
-                    placeholder="2015-2024"
-                    value={yearInput}
-                    onChange={(e) => setYearInput(e.target.value)}
-                    min="2015"
-                    max="2024"
-                    className="h-14 bg-slate-800/60 border-slate-600 text-white text-lg"
-                  />
-                </div>
-                <Button
-                  onClick={handleSearch}
-                  disabled={!cityInput || !yearInput || isSearching}
-                  size="lg"
-                  className="w-full h-14 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-lg font-orbitron"
-                >
-                  {isSearching ? (
-                    <>
-                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                      SCANNING EARTH...
-                    </>
-                  ) : (
-                    <>
-                      <Search className="mr-2 h-5 w-5" />
-                      SEARCH FROM SPACE
-                    </>
-                  )}
-                </Button>
-              </div>
-            </Card>
-          )}
-
-          {step === 2 && currentImage && (
-            <div className="animate-fade-in">
-              <Card className="p-8 bg-gradient-to-b from-slate-900/60 to-slate-950/60 border-slate-700/40 backdrop-blur-xl">
-                <div className="relative">
-                  <div className="relative rounded-3xl overflow-hidden shadow-2xl bg-black">
-                    <div className="absolute top-3 left-3 w-6 h-6 bg-slate-700 rounded-full border-4 border-slate-600 z-10 shadow-lg" />
-                    <div className="absolute top-3 right-3 w-6 h-6 bg-slate-700 rounded-full border-4 border-slate-600 z-10 shadow-lg" />
-                    <div className="absolute bottom-3 left-3 w-6 h-6 bg-slate-700 rounded-full border-4 border-slate-600 z-10 shadow-lg" />
-                    <div className="absolute bottom-3 right-3 w-6 h-6 bg-slate-700 rounded-full border-4 border-slate-600 z-10 shadow-lg" />
-
-                    <div className="absolute top-0 left-0 w-32 h-full bg-gradient-to-r from-slate-900 to-transparent z-10 pointer-events-none" />
-                    <div className="absolute top-0 right-0 w-32 h-full bg-gradient-to-l from-slate-900 to-transparent z-10 pointer-events-none" />
-
-                    <Image
-                      src={currentImage.url || "/placeholder.svg"}
-                      alt={currentImage.title}
-                      width={1200}
-                      height={800}
-                      className="w-full h-[500px] md:h-[600px] object-cover"
-                      priority
-                    />
-
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none" />
-
-                    <div className="absolute inset-0 pointer-events-none opacity-20">
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-full bg-cyan-400" />
-                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-px bg-cyan-400" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-8 space-y-6">
-                  <h3 className="text-3xl md:text-4xl font-bold text-center text-white">{currentImage.title}</h3>
-
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div className="p-4 bg-slate-800/50 rounded-xl text-center border border-slate-700/50">
-                      <div className="text-3xl mb-1">📅</div>
-                      <div className="text-2xl font-bold text-cyan-400">{currentImage.year}</div>
-                      <div className="text-xs text-slate-400 mt-1">Year</div>
-                    </div>
-                    <div className="p-4 bg-slate-800/50 rounded-xl text-center border border-slate-700/50">
-                      <div className="text-3xl mb-1">📏</div>
-                      <div className="text-2xl font-bold text-blue-400">{currentImage.stats.altitude}</div>
-                      <div className="text-xs text-slate-400 mt-1">Altitude</div>
-                    </div>
-                    <div className="p-4 bg-slate-800/50 rounded-xl text-center border border-slate-700/50">
-                      <div className="text-3xl mb-1">⚡</div>
-                      <div className="text-2xl font-bold text-purple-400">{currentImage.stats.speed}</div>
-                      <div className="text-xs text-slate-400 mt-1">Speed</div>
-                    </div>
-                    <div className="p-4 bg-slate-800/50 rounded-xl text-center border border-slate-700/50">
-                      <div className="text-3xl mb-1">🔄</div>
-                      <div className="text-2xl font-bold text-green-400">{currentImage.stats.orbit}</div>
-                      <div className="text-xs text-slate-400 mt-1">Orbit Time</div>
-                    </div>
-                  </div>
-
-                  <div className="p-6 bg-gradient-to-r from-cyan-950/50 to-blue-950/50 border border-cyan-800/40 rounded-xl">
-                    <div className="flex items-start gap-4">
-                      <div className="text-4xl">🤖</div>
-                      <p className="text-lg text-slate-200 leading-relaxed flex-1">{currentImage.description}</p>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-
-              <div className="flex justify-center mt-8">
+              <div className="mt-6 text-right">
                 <Button
                   onClick={() => {
                     const finalScore = Math.min(score, 25)
@@ -415,15 +360,14 @@ export default function CupolaPage() {
                     router.push("/benefits")
                   }}
                   size="lg"
-                  className="h-16 px-12 text-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 font-bold shadow-lg font-orbitron"
+                  className="h-12 px-8 text-base bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 font-bold shadow-lg font-orbitron"
                 >
                   Continue Mission
-                  <ArrowRight className="ml-2 h-6 w-6" />
                 </Button>
               </div>
-            </div>
-          )}
-        </div>
+            </Card>
+          </div>
+        )}
       </div>
     </main>
   )

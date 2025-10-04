@@ -10,6 +10,7 @@ export default function CertificatePage() {
   const router = useRouter()
   const [userData, setUserData] = useState<{ name: string; age: string; language: string } | null>(null)
   const certificateRef = useRef<HTMLDivElement>(null)
+  const [isGenerating, setIsGenerating] = useState(false)
 
   useEffect(() => {
     const data = sessionStorage.getItem("userData")
@@ -20,8 +21,55 @@ export default function CertificatePage() {
     }
   }, [router])
 
-  const handleDownload = () => {
-    alert("Certificate download functionality would be implemented here using html2canvas and jsPDF libraries.")
+  const handleDownload = async () => {
+    if (!certificateRef.current) return
+    setIsGenerating(true)
+    try {
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([import('html2canvas'), import('jspdf')])
+
+      const canvas = await html2canvas(certificateRef.current as HTMLElement, { useCORS: true, scale: 2 })
+      const imgData = canvas.toDataURL('image/png')
+
+      const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
+      const pageWidth = pdf.internal.pageSize.getWidth()
+      const pageHeight = pdf.internal.pageSize.getHeight()
+
+      const imgProps = pdf.getImageProperties(imgData)
+      // px -> mm conversion approx (1 px = 0.264583 mm)
+      const imgWidthMm = imgProps.width * 0.264583
+      const imgHeightMm = imgProps.height * 0.264583
+
+      // fit image into page while keeping aspect ratio
+      let renderWidth = pageWidth
+      let renderHeight = (imgHeightMm * pageWidth) / imgWidthMm
+      if (renderHeight > pageHeight) {
+        renderHeight = pageHeight
+        renderWidth = (imgWidthMm * pageHeight) / imgHeightMm
+      }
+
+      const x = (pageWidth - renderWidth) / 2
+      const y = (pageHeight - renderHeight) / 2
+
+      pdf.addImage(imgData, 'PNG', x, y, renderWidth, renderHeight)
+
+      const filename = `certificate_${(userData?.name || 'user').replace(/\s+/g, '_')}.pdf`
+      pdf.save(filename)
+    } catch (err) {
+      console.error('Certificate generation failed', err)
+      // fallback: open image in new tab
+      try {
+        const html2canvas = (await import('html2canvas')).default
+        const canvas = await html2canvas(certificateRef.current as HTMLElement)
+        const data = canvas.toDataURL('image/png')
+        const w = window.open('about:blank')
+        if (w) w.document.write(`<img src="${data}"/>`)
+      } catch (e) {
+        console.error('Fallback generation failed', e)
+        alert('Failed to generate certificate. See console for details.')
+      }
+    } finally {
+      setIsGenerating(false)
+    }
   }
 
   const handleShare = () => {
@@ -136,9 +184,10 @@ export default function CertificatePage() {
               onClick={handleDownload}
               size="lg"
               className="h-14 px-10 text-lg bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/30"
+              disabled={isGenerating}
             >
               <Download className="mr-2 h-6 w-6" />
-              Download Certificate
+              {isGenerating ? 'Generating...' : 'Download Certificate'}
             </Button>
             <Button
               onClick={handleShare}
